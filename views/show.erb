@@ -1,5 +1,5 @@
 <nav class="actions">
-  <button onclick="location.href='/memos'">トップへ戻る</button>
+  <a href="/memos">トップへ戻る</a>
 </nav>
 
 <section>
@@ -8,7 +8,7 @@
 </section>
 
 <div class="actions">
-  <button onclick="location.href='/memos/<%= @memo_id %>/edit'">変更 </button>
+  <a href="/memos/<%= @memo_id %>/edit">変更</a>
 
   <form action="/memos/<%= @memo_id %>" method="POST">
     <input type="submit" value="削除" onclick="return confirm('削除しますか？');">

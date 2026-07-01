@@ -62,7 +62,9 @@ textarea {
 }
 
 .actions input[type="submit"],
-.actions button {
+.actions a {
+  text-decoration: none;
+  display: inline-block;
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
@@ -91,12 +93,14 @@ textarea {
   transform: translateY(-1px);
 }
 
-.actions button {
+.actions a {
+  text-decoration: none;
+  display: inline-block;
   background: #e0e0e0;
   color: #333;
 }
 
-.actions button:hover {
+.actions a:hover {
   background: #cfcfcf;
   transform: translateY(-1px);
 }
