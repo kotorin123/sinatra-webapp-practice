@@ -29,5 +29,5 @@ bundle exec ruby app.rb
 ### 4. ブラウザでアクセス
 ```
 
-http://localhost:4567/memo
+http://localhost:4567/memos
 ```
