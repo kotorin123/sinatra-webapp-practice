@@ -5,12 +5,12 @@
 
   <div class="form-area">
     <label>タイトル</label>
-    <input type="text" value="<%= h @memos_list[@memo_id]["title"] %>" name="title" required>
+    <input type="text" value="<%= h @title %>" name="title" required>
   </div>
 
   <div class="form-area">
     <label>内容</label>
-    <textarea name="content" required><%= h @memos_list[@memo_id]["content"] %></textarea>
+    <textarea name="content" required><%= h @content %></textarea>
   </div>
 
   <div class="actions">

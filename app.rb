@@ -15,6 +15,13 @@ def save_memos(memos_list)
   File.write('data/memos.json', json_memos_list)
 end
 
+def build_memo(params)
+  {
+    title: params[:title],
+    content: params[:content]
+  }
+end
+
 helpers do
   def h(text)
     Rack::Utils.escape_html(text)
@@ -31,55 +38,60 @@ get '/memos/new' do
 end
 
 get '/memos/:memo_id' do |id|
-  @memos_list = load_memos
+  memos_list = load_memos
+
+  halt 404 if !memos_list.key?(id)
+
   @memo_id = id
-  halt 404 if !@memos_list.key?(@memo_id)
+  @title = memos_list[@memo_id]['title']
+  @content = memos_list[@memo_id]['content']
+
   erb :show
 end
 
 get '/memos/:memo_id/edit' do |id|
-  @memos_list = load_memos
+  memos_list = load_memos
+
+  halt 404 if !memos_list.key?(id)
+
   @memo_id = id
-  halt 404 if !@memos_list.key?(@memo_id)
+  @title = memos_list[@memo_id]['title']
+  @content = memos_list[@memo_id]['content']
+
   erb :edit
 end
 
 post '/memos' do
-  @memos_list = load_memos
+  memos_list = load_memos
 
-  title = params[:title]
-  content = params[:content]
+  memo_id = SecureRandom.uuid
 
-  @memo_id = SecureRandom.uuid
+  memos_list[memo_id] = build_memo(params)
 
-  @memos_list[@memo_id] = { 'title' => title, 'content' => content }
+  save_memos(memos_list)
 
-  save_memos(@memos_list)
-
-  redirect "/memos/#{@memo_id}"
+  redirect "/memos/#{memo_id}"
 end
 
 patch '/memos/:memo_id' do
-  @memos_list = load_memos
+  memos_list = load_memos
 
-  @memo_id = params[:memo_id]
-  title = params[:title]
-  content = params[:content]
+  memo_id = params[:memo_id]
 
-  @memos_list[@memo_id] = { 'title' => title, 'content' => content }
+  memos_list[memo_id] = build_memo(params)
 
-  save_memos(@memos_list)
+  save_memos(memos_list)
 
-  redirect "/memos/#{@memo_id}"
+  redirect "/memos/#{memo_id}"
 end
 
 delete '/memos/:memo_id' do
-  @memos_list = load_memos
+  memos_list = load_memos
 
-  @memo_id = params[:memo_id]
-  @memos_list.delete(@memo_id.to_s)
+  memo_id = params[:memo_id]
+  memos_list.delete(memo_id.to_s)
 
-  save_memos(@memos_list)
+  save_memos(memos_list)
 
   redirect '/memos'
 end
