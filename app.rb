@@ -6,7 +6,12 @@ require 'json'
 require 'securerandom'
 
 def load_memos
-  file = File.read('./data/memos.json')
+  unless File.exist?('data/memos.json')
+    File.write('data/memos.json', '{}')
+    return {}
+  end
+
+  file = File.read('data/memos.json')
   file.empty? ? {} : JSON.parse(file)
 end
 
