@@ -1,16 +1,16 @@
 <h2>編集</h2>
 
-<form action="/memos/<%= @memo_id %>" method="POST">
+<form action="/memos/<%= @memo[:memo_id] %>" method="POST">
   <input type="hidden" name="_method" value="patch">
 
   <div class="form-area">
     <label>タイトル</label>
-    <input type="text" value="<%= h @title %>" name="title" required>
+    <input type="text" value="<%= h @memo[:title] %>" name="title" required>
   </div>
 
   <div class="form-area">
     <label>内容</label>
-    <textarea name="content" required><%= h @content %></textarea>
+    <textarea name="content" required><%= h @memo[:content] %></textarea>
   </div>
 
   <div class="actions">
