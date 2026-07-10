@@ -47,7 +47,7 @@ get '/memos/:memo_id' do |id|
 
   halt 404 if !memos_list.key?(id)
 
-  @memo = { memo_id: id, title: memos_list[id]['title'], content: memos_list[id]['content'] }
+  @memo = { id:, title: memos_list[id]['title'], content: memos_list[id]['content'] }
 
   erb :show
 end
@@ -57,7 +57,7 @@ get '/memos/:memo_id/edit' do |id|
 
   halt 404 if !memos_list.key?(id)
 
-  @memo = { memo_id: id, title: memos_list[id]['title'], content: memos_list[id]['content'] }
+  @memo = { id:, title: memos_list[id]['title'], content: memos_list[id]['content'] }
 
   erb :edit
 end
