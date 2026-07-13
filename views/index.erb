@@ -1,0 +1,11 @@
+<ul>
+  <% @memos_list.each do |id, memo| %>
+    <li>
+      <a href="/memos/<%= id %>"><%= h memo["title"] %></a>
+    </li>
+  <% end %>
+</ul>
+
+<div class="actions">
+  <a href="/memos/new">追加</a>
+</div>
