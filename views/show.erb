@@ -3,14 +3,14 @@
 </nav>
 
 <section>
-  <h2><%= h @memo[:title] %></h2>
-  <p class="memo_content"><%= h @memo[:content] %></p>
+  <h2><%= h @memo["title"] %></h2>
+  <p class="memo_content"><%= h @memo["content"] %></p>
 </section>
 
 <div class="actions">
-  <a href="/memos/<%= @memo[:id] %>/edit">変更</a>
+  <a href="/memos/<%= @memo["id"] %>/edit">変更</a>
 
-  <form action="/memos/<%= @memo[:id] %>" method="POST">
+  <form action="/memos/<%= @memo["id"] %>" method="POST">
     <input type="submit" value="削除" onclick="return confirm('削除しますか？');">
     <input type="hidden" name="_method" value="delete">
   </form>

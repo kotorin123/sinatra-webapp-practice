@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'erb_lint', require: false
+gem 'pg'
 gem 'puma', '~> 8.0'
 gem 'rackup', '~> 2.3'
 gem 'sinatra'
