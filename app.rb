@@ -2,7 +2,6 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
 require 'securerandom'
 require 'pg'
 
@@ -54,7 +53,7 @@ get '/memos/:memo_id' do |memo_id|
 end
 
 get '/memos/:memo_id/edit' do |memo_id|
-  @memo = @memo = find_memo(memo_id)
+  @memo = find_memo(memo_id)
 
   halt 404 unless @memo
 
