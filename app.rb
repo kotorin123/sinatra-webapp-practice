@@ -2,7 +2,6 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'securerandom'
 require 'pg'
 
 configure do
@@ -10,15 +9,16 @@ configure do
 end
 
 def read_memos
-  settings.connection.exec('SELECT * FROM memos')
+  settings.connection.exec('SELECT * FROM memos ORDER BY created_at DESC')
 end
 
 def find_memo(memo_id)
-  settings.connection.exec_params('SELECT * FROM memos WHERE id = $1', [memo_id]).first
+  settings.connection.exec_params('SELECT * FROM memos WHERE id = $1 LIMIT 1', [memo_id]).first
 end
 
-def create_memo(memo_id, params)
-  settings.connection.exec_params('INSERT INTO memos (id, title, content) VALUES ($1, $2, $3)', [memo_id, params[:title], params[:content]])
+def create_memo(params)
+  result = settings.connection.exec_params('INSERT INTO memos (title, content) VALUES ($1, $2) RETURNING id', [params[:title], params[:content]])
+  result.first['id']
 end
 
 def update_memo(memo_id, params)
@@ -36,7 +36,7 @@ helpers do
 end
 
 get '/memos' do
-  @memos_list = read_memos.to_a
+  @memos_list = read_memos
   erb :index
 end
 
@@ -61,9 +61,7 @@ get '/memos/:memo_id/edit' do |memo_id|
 end
 
 post '/memos' do
-  memo_id = SecureRandom.uuid
-
-  create_memo(memo_id, params)
+  memo_id = create_memo(params)
 
   redirect "/memos/#{memo_id}"
 end
