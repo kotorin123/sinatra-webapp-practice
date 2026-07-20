@@ -2,29 +2,31 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
-require 'securerandom'
+require 'pg'
 
-def load_memos
-  unless File.exist?('data/memos.json')
-    File.write('data/memos.json', '{}')
-    return {}
-  end
-
-  file = File.read('data/memos.json')
-  file.empty? ? {} : JSON.parse(file)
+configure do
+  set :connection, PG.connect(user: ENV['DB_USER'], dbname: ENV['DB_NAME'])
 end
 
-def save_memos(memos_list)
-  json_memos_list = memos_list.to_json
-  File.write('data/memos.json', json_memos_list)
+def read_memos
+  settings.connection.exec('SELECT * FROM memos ORDER BY created_at DESC')
 end
 
-def build_memo(params)
-  {
-    title: params[:title],
-    content: params[:content]
-  }
+def find_memo(memo_id)
+  settings.connection.exec_params('SELECT * FROM memos WHERE id = $1 LIMIT 1', [memo_id]).first
+end
+
+def create_memo(params)
+  result = settings.connection.exec_params('INSERT INTO memos (title, content) VALUES ($1, $2) RETURNING id', [params[:title], params[:content]])
+  result.first['id']
+end
+
+def update_memo(memo_id, params)
+  settings.connection.exec_params('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [params[:title], params[:content], memo_id])
+end
+
+def delete_memo(memo_id)
+  settings.connection.exec_params('DELETE FROM memos WHERE id = $1', [memo_id])
 end
 
 helpers do
@@ -34,7 +36,7 @@ helpers do
 end
 
 get '/memos' do
-  @memos_list = load_memos
+  @memos_list = read_memos
   erb :index
 end
 
@@ -42,57 +44,40 @@ get '/memos/new' do
   erb :new
 end
 
-get '/memos/:memo_id' do |id|
-  memos_list = load_memos
+get '/memos/:memo_id' do |memo_id|
+  @memo = find_memo(memo_id)
 
-  halt 404 if !memos_list.key?(id)
-
-  @memo = { id:, title: memos_list[id]['title'], content: memos_list[id]['content'] }
+  halt 404 unless @memo
 
   erb :show
 end
 
-get '/memos/:memo_id/edit' do |id|
-  memos_list = load_memos
+get '/memos/:memo_id/edit' do |memo_id|
+  @memo = find_memo(memo_id)
 
-  halt 404 if !memos_list.key?(id)
-
-  @memo = { id:, title: memos_list[id]['title'], content: memos_list[id]['content'] }
+  halt 404 unless @memo
 
   erb :edit
 end
 
 post '/memos' do
-  memos_list = load_memos
-
-  memo_id = SecureRandom.uuid
-
-  memos_list[memo_id] = build_memo(params)
-
-  save_memos(memos_list)
+  memo_id = create_memo(params)
 
   redirect "/memos/#{memo_id}"
 end
 
 patch '/memos/:memo_id' do
-  memos_list = load_memos
-
   memo_id = params[:memo_id]
 
-  memos_list[memo_id] = build_memo(params)
-
-  save_memos(memos_list)
+  update_memo(memo_id, params)
 
   redirect "/memos/#{memo_id}"
 end
 
 delete '/memos/:memo_id' do
-  memos_list = load_memos
-
   memo_id = params[:memo_id]
-  memos_list.delete(memo_id.to_s)
 
-  save_memos(memos_list)
+  delete_memo(memo_id)
 
   redirect '/memos'
 end

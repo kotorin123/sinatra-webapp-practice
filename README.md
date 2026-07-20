@@ -23,7 +23,7 @@ https://github.com/Shopify/erb_lint
 ### 3. アプリケーション起動
 ```
 
-bundle exec ruby app.rb
+DB_NAME=memo_app DB_USER=<USERNAME> bundle exec ruby app.rb
 ``` 
 
 ### 4. ブラウザでアクセス
